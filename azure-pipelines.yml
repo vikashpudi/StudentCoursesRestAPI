@@ -101,7 +101,7 @@ stages:
                 kubernetesServiceConnection: kubernetesServiceConnection
                 action: deploy
                 namespace: default
-                manifests: 
+                manifests: |
                   $(Build.SourcesDirectory)/manifests/mysql.yaml
                   $(Build.SourcesDirectory)/manifests/student.yaml
                 imagePullSecrets: imgepullsecret
