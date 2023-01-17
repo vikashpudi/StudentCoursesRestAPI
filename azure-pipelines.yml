@@ -102,8 +102,8 @@ stages:
                 action: deploy
                 namespace: default
                 manifests: |
-                  $(Build.SourcesDirectory)/manifests/mysql.yml
-                  $(Build.SourcesDirectory)/manifests/student.yml
+                  $(Build.SourcesDirectory)/manifests/mysql.yaml
+                  $(Build.SourcesDirectory)/manifests/student.yaml
                 imagePullSecrets: imgepullsecret
                 containers: |
                   $(containerRegistry)/$(imageRepository):$(tag)
