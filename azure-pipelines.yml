@@ -64,7 +64,7 @@ stages:
           - task: ArtifactoryPublishBuildInfo@1
             displayName: 'Publish Build Info'
             inputs:
-              artifactoryService: 'image.png'
+              artifactoryService: 'jfrogserviceconnection'
               buildName: '$(Build.DefinitionName)'
               buildNumber: '$(Build.BuildNumber)'
           - task: ArtifactoryXrayScan@1
