@@ -80,7 +80,7 @@ stages:
     jobs:
     - deployment: Deploy
       displayName: Deploy job
-      pool:
+      pool: selfnamepool
      #environment: 'myenv.dev' #customize with your environment
       strategy:
         runOnce:
