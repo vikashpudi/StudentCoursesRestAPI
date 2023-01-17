@@ -27,7 +27,7 @@ variables:
   registry: ${{ parameters.registry }}
   targetRepo: ${{ parameters.targetRepo }}
   buildContext: 'buildcontext-$(prodName)'
-  imageNameTb: '$(registry)/$(targetRepo)/test-$(prodName)'
+  imageNameTb: '$(registry)/$(targetRepo)/buildcontext-$(prodName)'
   imageNameBase: '$(registry)/$(targetRepo)/$(prodName)' 
 stages:
   - stage: Build
