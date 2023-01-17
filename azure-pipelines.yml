@@ -81,7 +81,7 @@ stages:
     - deployment: Deploy
       displayName: Deploy job
       pool: selfnamepool
-      environment: 'dev.dev' #customize with your environment
+      environment: 'dev' #customize with your environment
       strategy:
         runOnce:
           deploy:
