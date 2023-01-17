@@ -8,19 +8,70 @@ trigger:
 resources:
 - repo: self
 pool: selfnamepool
+parameters:
+- name: prodName
+  displayName: Product to Build
+  type: string
+  default: 'myappp'
+- name: registry
+  displayName: Registry Hostname
+  type: string
+  default: 'beatyourlimits.jfrog.io'
+- name: targetRepo
+  displayName: Target Repo to push to
+  type: string
+  default: 'mydockerrepo'
 variables:
   tag: '$(Build.BuildId)'
-
+  prodName: ${{ parameters.prodName }}
+  registry: ${{ parameters.registry }}
+  targetRepo: ${{ parameters.targetRepo }}
+  buildContext: 'buildcontext-$(prodName)'
+  imageNameTb: '$(registry)/$(targetRepo)/test-$(prodName)'
+  imageNameBase: '$(registry)/$(targetRepo)/$(prodName)' 
 stages:
-- stage: Build
-  displayName: Build image
-  jobs:
-  - job: Build
-    displayName: Build
-    steps:
-    - task: Docker@2
-      displayName: Build an image
-      inputs:
-        command: build
-        dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
-        tags: "sample:$(tag)"
+  - stage: Build
+    displayName: Build image
+    jobs:
+      - job: Build
+        displayName: Build
+        steps:
+          - task: ArtifactoryToolsInstaller@1
+            displayName: 'Install Build deps'
+            inputs:
+              artifactoryService: 'jfrogserviceconnection'
+              cliInstallationRepo: 'demo' 
+          - task: Docker@2
+            displayName: 'Build Image'
+            inputs:
+              containerRegistry: 'mydockerrepo'
+              repository: '$(targetRepo)/$(buildContext)'
+              command: 'build'
+              Dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+              tags: |
+                $(Build.BuildNumber)
+          - task: ArtifactoryDocker@1
+            displayName: 'Push Image'
+            inputs:
+              command: 'push'
+              artifactoryService: 'jfrogserviceconnection'
+              targetRepo: 'mydockerrepo'
+              imageName: '$(imageNameTb):$(Build.BuildNumber)'
+              collectBuildInfo: true
+              buildName: '$(Build.DefinitionName)'
+              buildNumber: '$(Build.BuildNumber)'
+              includeEnvVars: true
+          - task: ArtifactoryPublishBuildInfo@1
+            displayName: 'Publish Build Info'
+            inputs:
+              artifactoryService: 'image.png'
+              buildName: '$(Build.DefinitionName)'
+              buildNumber: '$(Build.BuildNumber)'
+         - task: ArtifactoryXrayScan@1
+           displayName: 'Xray Scan'
+           inputs:
+             artifactoryService: 'jfrogserviceconnection'
+             buildName: '$(Build.DefinitionName)'
+             buildNumber: '$(Build.BuildNumber)'
+             allowFailBuild: true
+          
