@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: StudentCoursesRestAPI
+spec:
+  minReadySeconds: 30
+  replicas: 4
+  selector:
+    matchLabels:
+      app: RestAPI
+      ver: v1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  template:
+    metadata:
+      name: RestAPI
+      labels:
+        app: StudentCoursesRestAPI
+        ver: v1
+    spec:
+      containers:
+        - name: c1
+          image: StudentCoursesRestAPI:latest
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env:
+        - name: MYSQL_SERVER
+          value: students-db
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkinsnew
+spec:
+  selector:
+    app: StudentCoursesRestAPI
+    ver: v1
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 32000
+      targetPort: 8080
+      protocol: TCP

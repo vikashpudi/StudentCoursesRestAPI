@@ -74,4 +74,34 @@ stages:
               buildName: '$(Build.DefinitionName)'
               buildNumber: '$(Build.BuildNumber)'
               allowFailBuild: true
-          
+  - stage: Deploy
+    displayName: Deploy stage
+    dependsOn: Build
+    jobs:
+    - deployment: Deploy
+      displayName: Deploy job
+      pool:
+     #environment: 'myenv.dev' #customize with your environment
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: KubernetesManifest@0
+              displayName: Create imagePullSecret
+              inputs:
+                action: createSecret
+                secretName: "imgepullsecret"
+                namespace: default
+                dockerRegistryEndpoint: dockerregsvcc
+
+            - task: KubernetesManifest@0
+              displayName: Deploy to Kubernetes cluster
+              inputs:
+                action: deploy
+                namespace: default
+                manifests: |
+                  $(Build.SourcesDirectory)/manifests/mysql.yml
+                  $(Build.SourcesDirectory)/manifests/student.yml
+                imagePullSecrets: imgepullsecret
+                containers: |
+                  $(containerRegistry)/$(imageRepository):$(tag)
