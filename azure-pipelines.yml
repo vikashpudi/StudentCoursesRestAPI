@@ -67,11 +67,11 @@ stages:
               artifactoryService: 'image.png'
               buildName: '$(Build.DefinitionName)'
               buildNumber: '$(Build.BuildNumber)'
-         - task: ArtifactoryXrayScan@1
-           displayName: 'Xray Scan'
-           inputs:
-             artifactoryService: 'jfrogserviceconnection'
-             buildName: '$(Build.DefinitionName)'
-             buildNumber: '$(Build.BuildNumber)'
-             allowFailBuild: true
+          - task: ArtifactoryXrayScan@1
+            displayName: 'Xray Scan'
+            inputs:
+              artifactoryService: 'jfrogserviceconnection'
+              buildName: '$(Build.DefinitionName)'
+              buildNumber: '$(Build.BuildNumber)'
+              allowFailBuild: true
           
