@@ -23,13 +23,13 @@ spec:
     spec:
       containers:
         - name: c1
-          image: StudentCoursesRestAPI:latest
+          image: beatyourlimits.jfrog.io/mydockerrepo/buildcontext-myappp:20230117.25
           ports:
             - containerPort: 8080
               protocol: TCP
           env:
         - name: MYSQL_SERVER
-          value: students-db
+          value: mysql
 
 ---
 apiVersion: v1
