@@ -36,11 +36,11 @@ stages:
       - job: Build
         displayName: Build
         steps:
-          - task: ArtifactoryToolsInstaller@1
-            displayName: 'Install Build deps'
-            inputs:
-              artifactoryService: 'jfrogserviceconnection'
-              cliInstallationRepo: 'demo' 
+          #- task: ArtifactoryToolsInstaller@1
+           #  displayName: 'Install Build deps'
+            # inputs:
+           #    artifactoryService: 'jfrogserviceconnection'
+          #     cliInstallationRepo: 'demo' 
           - task: Docker@2
             displayName: 'Build Image'
             inputs:
