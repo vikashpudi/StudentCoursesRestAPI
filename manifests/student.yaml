@@ -23,14 +23,15 @@ spec:
     spec:
       containers:
         - name: c1
-          image: beatyourlimits.jfrog.io/mydockerrepo/buildcontext-myappp:20230117.25
+          image: beatyourlimits.jfrog.io/mydockerrepo/buildcontext-myappp:20230117.29
           ports:
             - containerPort: 8080
               protocol: TCP
           env:
           - name: MYSQL_SERVER
             value: mysql
-
+      imagePullSecrets:
+        - name: imgepullsecret
 ---
 apiVersion: v1
 kind: Service
