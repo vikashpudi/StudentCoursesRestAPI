@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: StudentCoursesRestAPI
+  name: stdapi
 spec:
   minReadySeconds: 30
   replicas: 4
