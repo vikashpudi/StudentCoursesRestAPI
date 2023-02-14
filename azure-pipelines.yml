@@ -16,7 +16,7 @@ parameters:
 - name: registry
   displayName: Registry Hostname
   type: string
-  default: 'beatyourlimits.jfrog.io'
+  default: 'testmyconnection.jfrog.io'
 - name: targetRepo
   displayName: Target Repo to push to
   type: string
