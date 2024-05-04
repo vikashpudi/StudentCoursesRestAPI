@@ -49,7 +49,9 @@ stages:
               repository: '$(targetRepo)/$(buildContext)'
               command: 'buildAndPush'
               Dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
-              tags: '$(Build.BuildNumber)'
+              tags: |
+                $(Build.BuildNumber)
+                latest
   - stage: Deploy
     displayName: Deploy stage
     dependsOn: Build
