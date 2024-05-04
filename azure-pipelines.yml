@@ -47,7 +47,7 @@ stages:
             inputs:
               containerRegistry: 'acr'
               repository: '$(targetRepo)/$(buildContext)'
-              command: 'build'
+              command: 'buildAndPush'
               Dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
               tags: '$(Build.BuildNumber)'
   - stage: Deploy
