@@ -7,7 +7,8 @@ trigger:
 
 resources:
 - repo: self
-pool: selfnamepool
+pool: 
+    vmImage: 'ubuntu-latest'
 parameters:
 - name: prodName
   displayName: Product to Build
@@ -44,43 +45,19 @@ stages:
           - task: Docker@2
             displayName: 'Build Image'
             inputs:
-              containerRegistry: 'dockerregsvcc'
+              containerRegistry: 'acr'
               repository: '$(targetRepo)/$(buildContext)'
               command: 'build'
               Dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
-              tags: |
-                $(Build.BuildNumber)
-          - task: ArtifactoryDocker@1
-            displayName: 'Push Image'
-            inputs:
-              command: 'push'
-              artifactoryService: 'jfrogserviceconnection'
-              targetRepo: 'mydockerrepo'
-              imageName: '$(imageNameTb):$(Build.BuildNumber)'
-              collectBuildInfo: true
-              buildName: '$(Build.DefinitionName)'
-              buildNumber: '$(Build.BuildNumber)'
-              includeEnvVars: true
-          - task: ArtifactoryPublishBuildInfo@1
-            displayName: 'Publish Build Info'
-            inputs:
-              artifactoryService: 'jfrogserviceconnection'
-              buildName: '$(Build.DefinitionName)'
-              buildNumber: '$(Build.BuildNumber)'
-          - task: ArtifactoryXrayScan@1
-            displayName: 'Xray Scan'
-            inputs:
-              artifactoryService: 'jfrogserviceconnection'
-              buildName: '$(Build.DefinitionName)'
-              buildNumber: '$(Build.BuildNumber)'
-              allowFailBuild: true
+              tags: '$(Build.BuildNumber)'
   - stage: Deploy
     displayName: Deploy stage
     dependsOn: Build
     jobs:
     - deployment: Deploy
       displayName: Deploy job
-      pool: selfnamepool
+      pool:
+          vmImage: 'ubuntu-latest'
       environment: 'dev' #customize with your environment
       strategy:
         runOnce:
@@ -89,21 +66,22 @@ stages:
             - task: KubernetesManifest@0
               displayName: Create imagePullSecret
               inputs:
-                kubernetesServiceConnection: kubernetesServiceConnection
-                action: createSecret
-                secretName: "imgepullsecret"
-                namespace: default
-                dockerRegistryEndpoint: dockerregsvcc
+                action: 'createSecret'
+                kubernetesServiceConnection: 'aks'
+                namespace: 'default'
+                secretType: 'dockerRegistry'
+                secretName: 'imgepullsecret'
+                dockerRegistryEndpoint: 'acr'
 
             - task: KubernetesManifest@0
               displayName: Deploy to Kubernetes cluster
               inputs:
-                kubernetesServiceConnection: kubernetesServiceConnection
-                action: deploy
-                namespace: default
+                action: 'deploy'
+                kubernetesServiceConnection: 'aks'
+                namespace: 'default'
                 manifests: |
                   $(Build.SourcesDirectory)/manifests/mysql.yaml
                   $(Build.SourcesDirectory)/manifests/student.yaml
-                imagePullSecrets: imgepullsecret
+                imagePullSecrets: 'imgepullsecret'
                 #containers:
                   #$(containerRegistry)/$(imageRepository):$(tag)
